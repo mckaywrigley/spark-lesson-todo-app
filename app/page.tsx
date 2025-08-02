@@ -1,4 +1,28 @@
+"use client";
+
+import { useState } from "react";
+
+interface Todo {
+  id: number;
+  text: string;
+  completed: boolean;
+}
+
 export default function Home() {
+  const [todos, setTodos] = useState<Todo[]>([
+    { id: 1, text: "Complete the project documentation", completed: false },
+    { id: 2, text: "Review pull requests", completed: true },
+    { id: 3, text: "Schedule team meeting", completed: false },
+  ]);
+
+  const toggleTodo = (id: number) => {
+    setTodos(todos.map(todo => 
+      todo.id === id ? { ...todo, completed: !todo.completed } : todo
+    ));
+  };
+
+  const completedCount = todos.filter(todo => todo.completed).length;
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4">
       <div className="max-w-2xl mx-auto">
@@ -19,50 +43,27 @@ export default function Home() {
           </div>
           
           <div className="space-y-2">
-            <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-              <input
-                type="checkbox"
-                className="w-5 h-5 text-blue-500 rounded focus:ring-blue-500"
-              />
-              <span className="flex-1 text-gray-800 dark:text-gray-200">
-                Complete the project documentation
-              </span>
-              <button className="text-red-500 hover:text-red-700 transition-colors">
-                Delete
-              </button>
-            </div>
-            
-            <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-              <input
-                type="checkbox"
-                className="w-5 h-5 text-blue-500 rounded focus:ring-blue-500"
-                checked
-              />
-              <span className="flex-1 text-gray-800 dark:text-gray-200 line-through opacity-60">
-                Review pull requests
-              </span>
-              <button className="text-red-500 hover:text-red-700 transition-colors">
-                Delete
-              </button>
-            </div>
-            
-            <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-              <input
-                type="checkbox"
-                className="w-5 h-5 text-blue-500 rounded focus:ring-blue-500"
-              />
-              <span className="flex-1 text-gray-800 dark:text-gray-200">
-                Schedule team meeting
-              </span>
-              <button className="text-red-500 hover:text-red-700 transition-colors">
-                Delete
-              </button>
-            </div>
+            {todos.map(todo => (
+              <div key={todo.id} className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <input
+                  type="checkbox"
+                  className="w-5 h-5 text-blue-500 rounded focus:ring-blue-500"
+                  checked={todo.completed}
+                  onChange={() => toggleTodo(todo.id)}
+                />
+                <span className={`flex-1 text-gray-800 dark:text-gray-200 ${todo.completed ? 'line-through opacity-60' : ''}`}>
+                  {todo.text}
+                </span>
+                <button className="text-red-500 hover:text-red-700 transition-colors">
+                  Delete
+                </button>
+              </div>
+            ))}
           </div>
         </div>
         
         <div className="text-center text-sm text-gray-600 dark:text-gray-400">
-          <p>3 todos • 1 completed</p>
+          <p>{todos.length} todos • {completedCount} completed</p>
         </div>
       </div>
     </div>
